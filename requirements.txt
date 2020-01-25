@@ -1,0 +1,9 @@
+pillow
+opencv-python
+numpy
+matplotlib
+scipy
+pandas
+requests
+jupyter
+imutils
