@@ -1,3 +1,4 @@
+watchdog
 pillow
 opencv-python
 numpy

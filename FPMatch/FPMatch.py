@@ -30,7 +30,10 @@ class FPMatch:
         self.get_results()
 
     def preproc(self, img):
-        input_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(img.shape) == 3:
+            input_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        else:
+            input_gray = img
         input_scaled = cv2.resize(input_gray, (1366, 768), interpolation=cv2.INTER_AREA)
         res = input_scaled
 
@@ -169,12 +172,12 @@ class FPMatch:
             }
 
     def get_results(self):
-        self.output = np.zeros(self.img_touse.shape + (4,), 'uint8')
+        self.output = np.stack([self.img_touse] * 3, axis=-1)
         colors = [
-            (255, 0, 0, 255),
-            (0, 255, 0, 255),
-            (0, 0, 255, 255),
-            (255, 255, 0, 255),
+            (255, 0, 0),
+            (0, 255, 0),
+            (0, 0, 255),
+            (255, 255, 0),
         ]
 
         data = [(key, elem['evals']['scale'], elem['evals']['maxVal'], elem['mincoords'])
@@ -192,13 +195,19 @@ class FPMatch:
             en = tuple(self.cdict[key]['best_loc']['end'] + self.target_offset)
             cv2.rectangle(self.output, st, en, colors[i], 2)
 
+    def show(self):
         plt.figure(figsize=(16, 9))
-        plt.imshow(self.img_touse, cmap='gray')
-        plt.imshow(self.output, alpha=.5)
+        plt.imshow(self.output)
         plt.xticks([])
         plt.yticks([])
         plt.show()
         plt.close()
+
+    def get(self):
+        return self.output
+
+    def dump(self, filename):
+        cv2.imwrite(filename, self.output)
 
     @staticmethod
     def get_bbox(contour):
