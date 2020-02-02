@@ -6,5 +6,4 @@ matplotlib
 scipy
 pandas
 requests
-jupyter
 imutils
